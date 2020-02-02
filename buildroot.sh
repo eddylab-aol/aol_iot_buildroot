@@ -76,6 +76,10 @@ cp $COMP/etc/group $ROOTFS/etc/group
 logn "### set locales to en_US.UTF-8..."
 echo "LANG=en_US.UTF-8" > $ROOTFS/etc/default/locale
 
+logn "### set timezone..."
+echo "Asia/Seoul" > $ROOTFS/etc/timezone
+cp $ROOTFS/usr/share/zoneinfo/Asia/Seoul $ROOTFS/etc/localtime
+
 logn "### set google dns..."
 echo "8.8.8.8" > $ROOTFS/etc/resolv.conf
 
