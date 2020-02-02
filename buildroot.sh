@@ -80,14 +80,18 @@ logn "### set google dns..."
 echo "8.8.8.8" > $ROOTFS/etc/resolv.conf
 
 logn "### add rc.local..."
+chmod a+x $COMP/etc/init.d/rc.local
 cp $COMP/etc/init.d/rc.local $ROOTFS/etc/init.d/rc.local
 chrun "/usr/sbin/update-rc.d rc.local defaults"
 
 logn "### add aolinit(early init) script..."
+chmod a+x $COMP/etc/init.d/aolinit
+cp $COMP/etc/init.d/aolinit $ROOTFS/etc/init.d/aolinit
+chrun "/usr/sbin/update-rc.d rc.local defaults"
 
-logn "### add aolupdate..."
-
-logn "### add aolmanager..."
+logn "### add aolcommands..."
+chmod a+x $COMP/usr/local/bin/*
+cp $COMP/usr/local/bin/* $ROOTFS/usr/local/bin/
 
 logn "### patch /etc/motd..."
 cat <<'EOF' > $ROOTFS/etc/motd
@@ -111,8 +115,9 @@ EOF
 
 logn "### patch /etc/update-motd.d..."
 
-logn
+logn "### make rootfs.tar.gz ..."
+tar czf rootfs.tar.gz $ROOTFS/
 
-
+logn "### make rootfs.tar.gz finished..."
 
 

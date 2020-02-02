@@ -1,0 +1,32 @@
+#!/bin/bash
+
+echo "[info] get update file..."
+mkdir /usr/aolupdate > /dev/null 2>&1
+rm -rf /usr/aolupdate/* > /dev/null
+wget https://github.com/eddylab-aol/aol_magisk_update/archive/master.zip -P /usr/aolupdate > /dev/null 2>&1
+
+echo "[info] unzip update file..."
+cd /usr/aolupdate
+unzip /usr/aolupdate/master.zip > /dev/null
+rm /usr/aolupdate/master.zip
+cd /usr/aolupdate/aol_magisk_update-master
+mv /usr/aolupdate/aol_magisk_update-master/* ../
+cd ..
+rm -rf /usr/aolupdate/aol_magisk_update-master
+chmod a+x /usr/aolupdate/*
+
+CHECK=0
+while [ $CHECK -eq 0 ]
+	do
+		CUR_VER=`cat /linux.prop`
+		if [ -f '/usr/aolupdate/'$CUR_VER ]; then
+			'/usr/aolupdate/'$CUR_VER
+		else
+			echo "[info] current : $CUR_VER"
+			CHECK=1
+		fi
+	done
+
+rm -rf /usr/aolupdate/*
+
+exit 0

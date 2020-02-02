@@ -1,0 +1,48 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          aolinit
+# Required-Start:    $remote_fs $all
+# Required-Stop:     $remote_fs $all
+# Default-Start:     2 3 4 5
+# Default-Stop:      
+# Short-Description: aolinit init script
+# Description:       initscript by djjproject
+### END INIT INFO
+
+do_start() {
+	# hostname 
+	/usr/bin/hostname $(cat /etc/hostname)
+	
+	# apply sysctl.conf
+	/usr/sbin/sysctl --system
+	
+	# patch in /dev folder bindings
+	mkdir /dev/net
+    ln -s /dev/tun /dev/net/tun
+    ln -s /dev/block/* /dev
+	ln -s /proc/mounts /etc/mtab
+
+	# reboot / halt / poweroff patch
+	cp /usr/local/bin/reboot /sbin/reboot
+	cp /usr/local/bin/reboot /sbin/poweroff
+	cp /usr/local/bin/reboot /sbin/halt
+}
+
+case "$1" in
+  start)
+    do_start
+  ;;
+  stop)
+
+  ;;
+  restart)
+
+  ;;
+  *)
+    echo "Usage: "$1" {start|stop|restart}"
+    exit 1
+  ;;
+esac
+
+exit 0
