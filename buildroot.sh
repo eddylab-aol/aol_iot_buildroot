@@ -40,7 +40,7 @@ cp /usr/bin/qemu-arm-static $ROOTFS/usr/bin
 chrun "/bin/bash /debootstrap/debootstrap --second-stage"
 
 logn "### add system, data, vendor folder..."
-chrun "/usr/bin/mkdir /{data,vendor,system}"
+chrun "/usr/bin/mkdir /data /vendor /system"
 
 logn "### add buster repository urls..."
 cat <<'EOF' > $ROOTFS/etc/apt/sources.list
