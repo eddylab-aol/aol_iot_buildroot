@@ -2,14 +2,13 @@
 
 echo "### Android Over Linux buildroot script"
 echo "### You should run this script debian/ubuntu based OS"
-echo "### and ARM based system. (We will add qemu option later.)"
 
 echo "### install dependent packages..."
-apt update && apt install -y debootstrap
+apt update && apt install -y debootstrap qemu-user-static
 
 echo "### make debian10 buster rootfs..."
 mkdir rootfs
-debootstrap --arch arm buster rootfs/ http://ftp.lanet.kr/debian
+debootstrap --arch armhf --foreign buster rootfs/ http://httpredir.debian.org/debian
 
 echo "### add buster repository urls..."
 cat <<'EOF' > rootfs/etc/apt/sources.list
