@@ -2,6 +2,7 @@
 
 # configuration
 ROOTFS=rootfs
+COMP=buildroot
 
 # echo color output
 RED='\033[0;31m'
@@ -38,6 +39,9 @@ logn "### run debian10 buster $ROOTFS second stage..."
 cp /usr/bin/qemu-arm-static $ROOTFS/usr/bin
 chrun "/bin/bash /debootstrap/debootstrap --second-stage"
 
+logn "### add system, data, vendor folder..."
+chrun "/usr/bin/mkdir /{data,vendor,system}"
+
 logn "### add buster repository urls..."
 cat <<'EOF' > $ROOTFS/etc/apt/sources.list
 # debian stretch repo
@@ -53,10 +57,6 @@ deb http://ftp.lanet.kr/debian buster-updates main contrib non-free
 deb-src http://ftp.lanet.kr/debian buster-updates main contrib non-free
 EOF
 
-function chrun {
-	chroot $ROOTFS/ $1
-}
-
 logn "### set root passwd..."
 echo -e "androidoverlinux\nandroidoverlinux\n" | chrun "/bin/passwd root"
 
@@ -68,6 +68,51 @@ chrun "/bin/apt update"
 chrun "/usr/bin/hostname $(cat /etc/hostname)"
 chrun "/bin/apt install openssh-server -y"
 hostname $(cat /etc/hostname)
+
+logn "### add android groups ..."
+cp $COMP/etc/passwd $ROOTFS/etc/passwd
+cp $COMP/etc/group $ROOTFS/etc/group
+
+logn "### set locales to en_US.UTF-8..."
+echo "LANG=en_US.UTF-8" > $ROOTFS/etc/default/locale
+
+logn "### set google dns..."
+echo "8.8.8.8" > $ROOTFS/etc/resolv.conf
+
+logn "### add rc.local..."
+cp $COMP/etc/init.d/rc.local $ROOTFS/etc/init.d/rc.local
+chrun "/usr/sbin/update-rc.d rc.local defaults"
+
+logn "### add aolinit(early init) script..."
+
+logn "### add aolupdate..."
+
+logn "### add aolmanager..."
+
+logn "### patch /etc/motd..."
+cat <<'EOF' > $ROOTFS/etc/motd
+Welcome to AOL Debian GNU/Linux 10 buster (eddylab)
+                     _           _     _            
+     /\             | |         (_)   | |           
+    /  \   _ __   __| |_ __ ___  _  __| |           
+   / /\ \ | '_ \ / _` | '__/ _ \| |/ _` |           
+  / ____ \| | | | (_| | | | (_) | | (_| |           
+ /_____ \_|_| |_|\__,_|_| _\___/|_|\__,_|           
+  / __ \                 | |    (_)                 
+ | |  | __   _____ _ __  | |     _ _ __  _   ___  __
+ | |  | \ \ / / _ | '__| | |    | | '_ \| | | \ \/ /
+ | |__| |\ V |  __| |    | |____| | | | | |_| |>  < 
+  \____/  \_/ \___|_|    |______|_|_| |_|\__,_/_/\_\ 
+
+New to AoL Linux? Check this Guide :
+	http://androidoverlinux.djjproject.com/
+
+EOF
+
+logn "### patch /etc/update-motd.d..."
+
+logn
+
 
 
 
