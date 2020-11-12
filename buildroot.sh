@@ -25,7 +25,7 @@ logn "### Android Over Linux buildroot script"
 logn "### You should run this script debian/ubuntu based OS"
 
 logn "### cleanup buildroot..."
-rm -rf $ROOTFS
+rm -rf $ROOTFS > /dev/null 2>&1
 
 logn "### install dependent packages..."
 apt update && apt install -y debootstrap binfmt-support qemu-user-static
@@ -33,7 +33,7 @@ apt update && apt install -y debootstrap binfmt-support qemu-user-static
 logn "### make debian10 buster $ROOTFS..."
 mkdir $ROOTFS
 logn "### rootfs directory `readlink -e "$ROOTFS"`..."
-debootstrap --arch armhf --foreign buster $ROOTFS/ http://ftp.lanet.kr/debian
+debootstrap --arch armhf --foreign buster $ROOTFS/ http://deb.debian.org/debian
 
 logn "### run debian10 buster $ROOTFS second stage..."
 cp /usr/bin/qemu-arm-static $ROOTFS/usr/bin
@@ -44,30 +44,34 @@ chrun "/usr/bin/mkdir /data /vendor /system"
 
 logn "### add buster repository urls..."
 cat <<'EOF' > $ROOTFS/etc/apt/sources.list
-# debian stretch repo
-deb http://ftp.lanet.kr/debian/ buster main contrib non-free
-deb-src http://ftp.lanet.kr/debian/ buster main contrib non-free
+# debian buster repo
+deb http://deb.debian.org/debian/ buster main contrib non-free
+deb-src http://deb.debian.org/debian/ buster main contrib non-free
 
 # debian stretch-backports repo
-deb http://ftp.lanet.kr/debian buster-backports main contrib non-free
-deb-src http://ftp.lanet.kr/debian buster-backports main contrib non-free
+deb http://deb.debian.org/debian buster-backports main contrib non-free
+deb-src http://deb.debian.org/debian buster-backports main contrib non-free
 
 # debian stretch-updates repo
-deb http://ftp.lanet.kr/debian buster-updates main contrib non-free
-deb-src http://ftp.lanet.kr/debian buster-updates main contrib non-free
+deb http://deb.debian.org/debian buster-updates main contrib non-free
+deb-src http://deb.debian.org/debian buster-updates main contrib non-free
 EOF
-
-logn "### set root passwd..."
-echo -e "androidoverlinux\nandroidoverlinux\n" | chrun "/bin/passwd root"
 
 logn "### set hostname..."
 echo "AOL-Debian" > $ROOTFS/etc/hostname
+
+logn "### set root passwd..."
+echo -e "androidoverlinux\nandroidoverlinux\n" | chrun "/bin/passwd root"
 
 logn "### install openssh server..."
 chrun "/bin/apt update"
 chrun "/usr/bin/hostname $(cat /etc/hostname)"
 chrun "/bin/apt install openssh-server -y"
-hostname $(cat /etc/hostname)
+sed -i -e 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' $ROOTFS/etc/ssh/sshd_config
+sed -i -e 's/#PasswordAuthentication yes/PasswordAuthentication yes/g' $ROOTFS/etc/ssh/sshd_config
+
+logn "### install some packages..."
+chrun "/bin/apt install dialog locales tzdata wget curl resolvconf -y"
 
 logn "### add android groups ..."
 cp $COMP/etc/passwd $ROOTFS/etc/passwd
@@ -81,17 +85,21 @@ echo "Asia/Seoul" > $ROOTFS/etc/timezone
 cp $ROOTFS/usr/share/zoneinfo/Asia/Seoul $ROOTFS/etc/localtime
 
 logn "### set google dns..."
-echo "8.8.8.8" > $ROOTFS/etc/resolv.conf
+echo "nameserver 8.8.8.8" > $ROOTFS/etc/resolv.conf
+
+logn "### add rc init script..."
+chmod a+x $COMP/etc/init.d/rc
+cp $COMP/etc/init.d/rc $ROOTFS/etc/init.d/rc
 
 logn "### add rc.local..."
 chmod a+x $COMP/etc/init.d/rc.local
 cp $COMP/etc/init.d/rc.local $ROOTFS/etc/init.d/rc.local
 chrun "/usr/sbin/update-rc.d rc.local defaults"
 
-logn "### add aolinit(early init) script..."
+logn "### add aolinit script..."
 chmod a+x $COMP/etc/init.d/aolinit
 cp $COMP/etc/init.d/aolinit $ROOTFS/etc/init.d/aolinit
-chrun "/usr/sbin/update-rc.d rc.local defaults"
+chrun "/usr/sbin/update-rc.d aolinit defaults"
 
 logn "### add aolcommands..."
 chmod a+x $COMP/usr/local/bin/*
@@ -112,16 +120,22 @@ Welcome to AOL Debian GNU/Linux 10 buster (eddylab)
  | |__| |\ V |  __| |    | |____| | | | | |_| |>  < 
   \____/  \_/ \___|_|    |______|_|_| |_|\__,_/_/\_\ 
 
-New to AoL Linux? Check this Guide :
-	http://androidoverlinux.djjproject.com/
 
 EOF
 
-logn "### patch /etc/update-motd.d..."
+logn "### write version information..."
+echo "ro.build.version.linux=$(date "+%Y%m%d").120000" > $ROOTFS/linux.txt
 
 logn "### make rootfs.tar.gz ..."
 tar czf rootfs.tar.gz $ROOTFS/
 
-logn "### make rootfs.tar.gz finished..."
+logn "### make linux.tar..."
+rm -rf /data > /dev/null 2>&1
+mkdir -p /data/linux
+cp -r $ROOTFS/* /data/linux
+tar cf linux.tar-$(date "+%Y%m%d-%H%M%S") /data/linux
+rm -rf /data
+
+logn "### buildroot routine finished..."
 
 

@@ -2,8 +2,8 @@
 
 ### BEGIN INIT INFO
 # Provides:          aolinit
-# Required-Start:    $remote_fs $all
-# Required-Stop:     $remote_fs $all
+# Required-Start:    hostname
+# Required-Stop:     
 # Default-Start:     2 3 4 5
 # Default-Stop:      
 # Short-Description: aolinit init script
@@ -19,8 +19,8 @@ do_start() {
 	
 	# patch in /dev folder bindings
 	mkdir /dev/net
-    ln -s /dev/tun /dev/net/tun
-    ln -s /dev/block/* /dev
+	ln -s /dev/tun /dev/net/tun
+	ln -s /dev/block/* /dev
 	ln -s /proc/mounts /etc/mtab
 
 	# reboot / halt / poweroff patch
