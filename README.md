@@ -1,1 +1,1 @@
-# aol_magisk
+# AoL IOT buildroot
