@@ -71,7 +71,7 @@ sed -i -e 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' $ROOTFS/e
 sed -i -e 's/#PasswordAuthentication yes/PasswordAuthentication yes/g' $ROOTFS/etc/ssh/sshd_config
 
 logn "### install some packages..."
-chrun "/bin/apt install dialog locales tzdata wget curl resolvconf -y"
+chrun "/bin/apt install dialog locales tzdata wget curl resolvconf unzip -y"
 
 logn "### add android groups ..."
 cp $COMP/etc/passwd $ROOTFS/etc/passwd
