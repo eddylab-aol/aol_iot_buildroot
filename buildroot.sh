@@ -33,7 +33,7 @@ apt update && apt install -y debootstrap binfmt-support qemu-user-static
 logn "### make debian10 buster $ROOTFS..."
 mkdir $ROOTFS
 logn "### rootfs directory `readlink -e "$ROOTFS"`..."
-debootstrap --arch armhf --foreign buster $ROOTFS/ http://deb.debian.org/debian
+debootstrap --arch armhf --foreign buster $ROOTFS/ http://ftp.kr.debian.org/debian
 
 logn "### run debian10 buster $ROOTFS second stage..."
 cp /usr/bin/qemu-arm-static $ROOTFS/usr/bin
@@ -45,16 +45,16 @@ chrun "/usr/bin/mkdir /data /vendor /system"
 logn "### add buster repository urls..."
 cat <<'EOF' > $ROOTFS/etc/apt/sources.list
 # debian buster repo
-deb http://deb.debian.org/debian/ buster main contrib non-free
-deb-src http://deb.debian.org/debian/ buster main contrib non-free
+deb http://ftp.kr.debian.org/debian/ buster main contrib non-free
+deb-src http://ftp.kr.debian.org/debian/ buster main contrib non-free
 
 # debian stretch-backports repo
-deb http://deb.debian.org/debian buster-backports main contrib non-free
-deb-src http://deb.debian.org/debian buster-backports main contrib non-free
+deb http://ftp.kr.debian.org/debian buster-backports main contrib non-free
+deb-src http://ftp.kr.debian.org/debian buster-backports main contrib non-free
 
 # debian stretch-updates repo
-deb http://deb.debian.org/debian buster-updates main contrib non-free
-deb-src http://deb.debian.org/debian buster-updates main contrib non-free
+deb http://ftp.kr.debian.org/debian buster-updates main contrib non-free
+deb-src http://ftp.kr.debian.org/debian buster-updates main contrib non-free
 EOF
 
 logn "### set hostname..."
@@ -85,7 +85,7 @@ echo "Asia/Seoul" > $ROOTFS/etc/timezone
 cp $ROOTFS/usr/share/zoneinfo/Asia/Seoul $ROOTFS/etc/localtime
 
 logn "### set google dns..."
-echo "nameserver 8.8.8.8" > $ROOTFS/etc/resolv.conf
+echo "nameserver 8.8.8.8" > $ROOTFS/etc/resolvconf/resolv.conf.d/base
 
 logn "### add rc init script..."
 chmod a+x $COMP/etc/init.d/rc
@@ -104,6 +104,18 @@ chrun "/usr/sbin/update-rc.d aolinit defaults"
 logn "### add aolcommands..."
 chmod a+x $COMP/usr/local/bin/*
 cp $COMP/usr/local/bin/* $ROOTFS/usr/local/bin/
+
+logn "### add first run script..."
+chmod a+x $COMP/home/first_run
+cp $COMP/home/first_run $ROOTFS/root/first_run
+echo -e "if [ -f ~/first_run ]; then\n\tbash first_run\nfi" >> $ROOTFS/root/.bashrc
+
+logn "### fix apt error..."
+chrun "/usr/sbin/usermod -g 3003 _apt"
+
+logn "### clean apt cache..."
+chrun "/bin/apt-get clean"
+chrun "/bin/apt-get autoclean"
 
 logn "### patch /etc/motd..."
 cat <<'EOF' > $ROOTFS/etc/motd

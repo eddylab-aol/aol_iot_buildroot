@@ -27,6 +27,9 @@ do_start() {
 	cp /usr/local/bin/reboot /sbin/reboot
 	cp /usr/local/bin/reboot /sbin/poweroff
 	cp /usr/local/bin/reboot /sbin/halt
+
+	# dns
+	resolvconf -u
 }
 
 case "$1" in

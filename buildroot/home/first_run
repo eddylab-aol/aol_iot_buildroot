@@ -1,0 +1,17 @@
+#!/bin/bash
+
+function output {
+dialog --backtitle "AndroidOverLinux Initial Configuration." --msgbox "$1" 10 30
+}
+
+output "configure timezone..."
+dpkg-reconfigure tzdata
+
+output "configure locales..."
+dpkg-reconfigure locales
+
+output "configure root password..."
+passwd root
+
+output "configuration finished..."
+rm ~/first_run
