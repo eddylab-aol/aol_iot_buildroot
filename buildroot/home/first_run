@@ -13,5 +13,10 @@ dpkg-reconfigure locales
 output "configure root password..."
 passwd root
 
+output "apt update and fix ca-certificates..."
+apt update
+apt autoremove ca-certificates -y
+apt install ca-certificates -y
+
 output "configuration finished..."
 rm ~/first_run
