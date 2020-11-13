@@ -2,7 +2,7 @@
 
 # configuration
 WORKDIR=$(pwd)
-ROOTFS=$WORKDIR/rootfs
+ROOTFS=$(WORKDIR)/rootfs
 COMP=$(WORKDIR)/buildroot
 SERVICE_DIR=$(WORKDIR)/services
 
