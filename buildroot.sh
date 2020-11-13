@@ -120,6 +120,8 @@ chmod a+x $COMP/home/first_run
 cp $COMP/home/first_run $ROOTFS/root/first_run
 echo -e "if [ -f ~/first_run ]; then\n\tbash first_run\nfi" >> $ROOTFS/root/.bashrc
 
+######### after fixes #########
+
 logn "### fix apt error..."
 chrun "/usr/sbin/usermod -g 3003 _apt"
 
@@ -129,6 +131,8 @@ chrun "/bin/apt-get autoclean"
 
 logn "### fix permissions for /tmp ..."
 chmod a+rwx $ROOTFS/tmp
+
+######### after fixes end #########
 
 logn "### patch /etc/motd..."
 cat <<'EOF' > $ROOTFS/etc/motd
