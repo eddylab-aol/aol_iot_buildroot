@@ -157,7 +157,7 @@ echo "ro.build.version.linux=$(date "+%Y%m%d").120000" > $ROOTFS/linux.txt
 
 ######### buildroot independent parts #########
 logn "#### run buildroot independent parts..."
-bash $SERVICE_DIR/buildroot-install.sh
+source $SERVICE_DIR/buildroot-install.sh
 
 logn "### make rootfs.tar.gz ..."
 tar czf rootfs.tar.gz $ROOTFS/
