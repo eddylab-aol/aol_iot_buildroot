@@ -9,8 +9,6 @@ ROOTFS_FILE="z2m.tar.gz"
 INIT_FILE="z2m"
 
 cd $WORK_DIR
-wget https://github.com/eddylab-aol/aol_iot_buildroot/raw/master/services/zigbee2mqtt/files/z2m.tar.gz
-wget https://github.com/eddylab-aol/aol_iot_buildroot/raw/master/services/zigbee2mqtt/files/z2m
 
 tar xf $ROOTFS_FILE
 

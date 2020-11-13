@@ -9,6 +9,7 @@ do
 	chmod a+x $SERVICE
 	mkidr $ROOTFS/tmp/installer > /dev/null 2>&1
 	cp $SERVICE $ROOTFS/tmp/installer/install.sh
+	cp -r $(dirname $SERVICE)/files/* /tmp/installer/
 	chrun "/bin/bash /tmp/installer/install.sh"
 	rm -rf $ROOTFS/tmp/installer > /dev/null 2>&1
 done 
