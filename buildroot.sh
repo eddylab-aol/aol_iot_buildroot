@@ -1,8 +1,10 @@
 #!/bin/bash
 
 # configuration
-ROOTFS=rootfs
-COMP=buildroot
+WORKDIR=$(pwd)
+ROOTFS=$WORKDIR/rootfs
+COMP=$(WORKDIR)/buildroot
+SERVICE_DIR=$(WORKDIR)/services
 
 # echo color output
 RED='\033[0;31m'
@@ -20,6 +22,14 @@ function loge {
 function chrun {
 	chroot $ROOTFS/ $1
 }
+
+function check {
+    if [ "$?" != "0" ]; then
+        output "$1"
+        sleep 86400
+    fi
+}
+
 
 logn "### Android Over Linux buildroot script"
 logn "### You should run this script debian/ubuntu based OS"
@@ -137,6 +147,9 @@ EOF
 
 logn "### write version information..."
 echo "ro.build.version.linux=$(date "+%Y%m%d").120000" > $ROOTFS/linux.txt
+
+######### buildroot independent parts #########
+logn "#### run buildroot independent parts..."
 
 logn "### make rootfs.tar.gz ..."
 tar czf rootfs.tar.gz $ROOTFS/
