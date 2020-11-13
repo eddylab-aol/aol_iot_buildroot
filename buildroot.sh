@@ -2,9 +2,9 @@
 
 # configuration
 WORKDIR=$(pwd)
-ROOTFS=$(WORKDIR)/rootfs
-COMP=$(WORKDIR)/buildroot
-SERVICE_DIR=$(WORKDIR)/services
+ROOTFS=$WORKDIR/rootfs
+COMP=$WORKDIR/buildroot
+SERVICE_DIR=$WORKDIR/services
 
 # echo color output
 RED='\033[0;31m'
@@ -157,7 +157,7 @@ echo "ro.build.version.linux=$(date "+%Y%m%d").120000" > $ROOTFS/linux.txt
 
 ######### buildroot independent parts #########
 logn "#### run buildroot independent parts..."
-eval $SERVICE_DIR/buildroot-install.sh
+bash $SERVICE_DIR/buildroot-install.sh
 
 logn "### make rootfs.tar.gz ..."
 tar czf rootfs.tar.gz $ROOTFS/
