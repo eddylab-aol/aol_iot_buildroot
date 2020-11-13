@@ -127,6 +127,9 @@ logn "### clean apt cache..."
 chrun "/bin/apt-get clean"
 chrun "/bin/apt-get autoclean"
 
+logn "### fix permissions for /tmp ..."
+chmod a+rwx $ROOTFS/tmp
+
 logn "### patch /etc/motd..."
 cat <<'EOF' > $ROOTFS/etc/motd
 Welcome to AOL Debian GNU/Linux 10 buster (eddylab)
@@ -150,6 +153,7 @@ echo "ro.build.version.linux=$(date "+%Y%m%d").120000" > $ROOTFS/linux.txt
 
 ######### buildroot independent parts #########
 logn "#### run buildroot independent parts..."
+eval $SERVICE_DIR/buildroot-install.sh
 
 logn "### make rootfs.tar.gz ..."
 tar czf rootfs.tar.gz $ROOTFS/
