@@ -2,8 +2,8 @@
 
 ### BEGIN INIT INFO
 # Provides:          z2m
-# Required-Start:    $remote_fs $all
-# Required-Stop:     $remote_fs $all
+# Required-Start:    hostname
+# Required-Stop:     
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description:

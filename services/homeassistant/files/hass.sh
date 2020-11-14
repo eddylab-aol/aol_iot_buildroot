@@ -1,9 +1,9 @@
 #!/bin/sh
 
 ### BEGIN INIT INFO
-# Provides:          z2m
-# Required-Start:    $remote_fs $all
-# Required-Stop:     $remote_fs $all
+# Provides:          hass
+# Required-Start:    hostname
+# Required-Stop:
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description:
@@ -11,14 +11,16 @@
 ### END INIT INFO
 
 
-DESC="z2m"
-NAME=z2m
+DESC="hass"
+NAME=$DESC
 PIDFILE=/var/run/$NAME.pid
+CHDIR=/opt/hass
+CHCOMMAND="/bin/sh /etc/services.d/home-assistant/run"
 COMMAND="/usr/sbin/chroot"
-DAEMON_ARGS="/opt/z2m /bin/sh /usr/local/bin/docker-entrypoint.sh node /app/index.js"
+CONFIGDIR=/data/media/0/$DESC
+CHCONFIGDIR="$CHDIR/config"
+DAEMON_ARGS="$CHDIR $CHCOMMAND"
 RUN_AS=root
-CHDIR=/opt/z2m
-CONFIGDIR=/data/media/0/z2m
 
 d_start() {
     mkdir -p $CONFIGIDR > /dev/null 2>&1
@@ -26,7 +28,7 @@ d_start() {
     mount --bind /proc $CHDIR/proc
     mount --bind /run $CHDIR/run
     mount --bind /sys $CHDIR/sys
-    mount --bind $CONFIGDIR $CHDIR/app/data
+    mount --bind $CONFIGDIR $CHCONFIGDIR
     start-stop-daemon --start --quiet --background --make-pidfile --pidfile $PIDFILE --chuid $RUN_AS --exec $COMMAND -- $DAEMON_ARGS
 }
 

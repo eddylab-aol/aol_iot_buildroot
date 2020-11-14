@@ -39,6 +39,7 @@ rm -rf $ROOTFS > /dev/null 2>&1
 
 logn "### install dependent packages..."
 apt update && apt install -y debootstrap binfmt-support qemu-user-static
+update-binfmts --enable qemu-arm
 
 logn "### make debian10 buster $ROOTFS..."
 mkdir $ROOTFS
@@ -125,10 +126,6 @@ echo -e "if [ -f ~/first_run ]; then\n\tbash first_run\nfi" >> $ROOTFS/root/.bas
 logn "### fix apt error..."
 chrun "/usr/sbin/usermod -g 3003 _apt"
 
-logn "### clean apt cache..."
-chrun "/bin/apt-get clean"
-chrun "/bin/apt-get autoclean"
-
 logn "### fix permissions for /tmp ..."
 chmod a+rwx $ROOTFS/tmp
 
@@ -158,6 +155,13 @@ echo "ro.build.version.linux=$(date "+%Y%m%d").120000" > $ROOTFS/linux.txt
 ######### buildroot independent parts #########
 logn "#### run buildroot independent parts..."
 source $SERVICE_DIR/buildroot-install.sh
+
+logn "### clean apt cache..."
+chrun "/bin/apt-get clean"
+chrun "/bin/apt-get autoclean"
+
+logn "### clean misc paths..."
+rm -rf $ROOTFS/dev/*
 
 logn "### make rootfs.tar.gz ..."
 tar czf rootfs.tar.gz $ROOTFS/
