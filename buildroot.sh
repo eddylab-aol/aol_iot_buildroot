@@ -20,7 +20,7 @@ function loge {
 }
 
 function chrun {
-	chroot $ROOTFS/ /usr/bin/qemu-arm-static /bin/bash "$1"
+	chroot $ROOTFS/ /bin/bash -c "$1"
 }
 
 function check {
@@ -50,7 +50,13 @@ debootstrap --arch armhf --foreign buster $ROOTFS/ http://ftp.kr.debian.org/debi
 
 logn "### run debian10 buster $ROOTFS second stage..."
 cp /usr/bin/qemu-arm-static $ROOTFS/usr/bin
-chrun "/bin/bash /debootstrap/debootstrap --second-stage"
+chroot $ROOTFS /bin/bash /debootstrap/debootstrap --second-stage
+
+logn "### bind local to chroot..."
+mount -t proc /proc $ROOTFS/proc
+mount -o bind /dev $ROOTFS/dev
+mount -o bind /dev/pts $ROOTFS/dev/pts
+mount -o bind /sys $ROOTFS/sys
 
 logn "### add system, data, vendor folder..."
 chrun "/usr/bin/mkdir /data /vendor /system"
@@ -153,7 +159,8 @@ logn "### clean apt cache..."
 chrun "/bin/apt-get clean"
 chrun "/bin/apt-get autoclean"
 
-logn "### clean misc paths..."
+logn "### prepare to make images..."
+umount $ROOTFS/{sys,proc,dev/pts,dev}
 rm -rf $ROOTFS/dev/*
 
 logn "### make rootfs.tar.gz ..."
