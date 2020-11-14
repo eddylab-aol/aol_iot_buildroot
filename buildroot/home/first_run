@@ -26,7 +26,7 @@ chmod a+rwx /tmp
 # fix ca-certificates error
 apt update
 apt autoremove ca-certificates -y
-apt install ca-certificates -y
+apt install ca-certificates sysv-rc -y
 
 
 output "configuration finished..."

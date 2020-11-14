@@ -40,17 +40,17 @@ rm -rf linux.tar-*
 rm -rf rootfs.tar.gz
 
 logn "### install dependent packages..."
-apt update && apt install -y debootstrap binfmt-support qemu-user-static
+apt update && apt install -y debootstrap binfmt-support qemu-user-static binutils
 update-binfmts --enable qemu-arm
 
 logn "### make debian10 buster $ROOTFS..."
 mkdir $ROOTFS
 logn "### rootfs directory `readlink -e "$ROOTFS"`..."
-debootstrap --arch armhf --foreign buster $ROOTFS/ http://ftp.kr.debian.org/debian
+debootstrap --no-check-gpg --extractor=ar --exclude=init,systemd-sysv,dbus --include=locales,sudo --arch armhf --foreign buster $ROOTFS/ http://ftp.kr.debian.org/debian
 
 logn "### run debian10 buster $ROOTFS second stage..."
 cp /usr/bin/qemu-arm-static $ROOTFS/usr/bin
-chroot $ROOTFS /bin/bash /debootstrap/debootstrap --second-stage
+chroot $ROOTFS /bin/bash /debootstrap/debootstrap --no-check-gpg --second-stage
 
 logn "### bind local to chroot..."
 mount -t proc /proc $ROOTFS/proc
@@ -83,6 +83,8 @@ logn "### set root passwd..."
 echo -e "androidoverlinux\nandroidoverlinux\n" | chrun "passwd root"
 
 logn "### install some packages..."
+echo 'apt::sandbox::seccomp "false";' > $ROOTFS/etc/apt/apt.conf.d/999seccomp-off
+echo 'Debug::NoDropPrivs "true";' > $ROOTFS/etc/apt/apt.conf.d/00no-drop-privs
 chrun "apt install dialog locales tzdata wget curl unzip sysvinit-core sysvinit-utils -y"
 
 logn "### install openssh server..."
