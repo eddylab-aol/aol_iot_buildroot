@@ -20,7 +20,7 @@ function loge {
 }
 
 function chrun {
-	chroot $ROOTFS/ /bin/bash -c "$1"
+	chroot $ROOTFS/ /usr/bin/qemu-arm-static /bin/bash -c "$1"
 }
 
 function check {
@@ -59,7 +59,7 @@ mount -o bind /dev/pts $ROOTFS/dev/pts
 mount -o bind /sys $ROOTFS/sys
 
 logn "### add system, data, vendor folder..."
-chrun "/usr/bin/mkdir /data /vendor /system"
+chrun "mkdir /data /vendor /system"
 
 logn "### add buster repository urls..."
 cat <<'EOF' > $ROOTFS/etc/apt/sources.list
@@ -80,15 +80,15 @@ logn "### set hostname..."
 echo "AOL-Debian" > $ROOTFS/etc/hostname
 
 logn "### set root passwd..."
-echo -e "androidoverlinux\nandroidoverlinux\n" | chrun "/bin/passwd root"
+echo -e "androidoverlinux\nandroidoverlinux\n" | chrun "passwd root"
 
 logn "### install some packages..."
-chrun "/bin/apt install dialog locales tzdata wget curl unzip sysvinit-core sysvinit-utils -y"
+chrun "apt install dialog locales tzdata wget curl unzip sysvinit-core sysvinit-utils -y"
 
 logn "### install openssh server..."
-chrun "/bin/apt update"
-chrun "/usr/bin/hostname $(cat /etc/hostname)"
-chrun "/bin/apt install openssh-server -y"
+chrun "apt update"
+chrun "hostname $(cat /etc/hostname)"
+chrun "apt install openssh-server -y"
 sed -i -e 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' $ROOTFS/etc/ssh/sshd_config
 sed -i -e 's/#PasswordAuthentication yes/PasswordAuthentication yes/g' $ROOTFS/etc/ssh/sshd_config
 
@@ -109,7 +109,7 @@ echo "nameserver 8.8.8.8" > $ROOTFS/etc/resolv.conf
 logn "### add aolinit script..."
 chmod a+x $COMP/etc/init.d/aolinit
 cp $COMP/etc/init.d/aolinit $ROOTFS/etc/init.d/aolinit
-chrun "/usr/sbin/update-rc.d aolinit defaults"
+chrun "update-rc.d aolinit defaults"
 
 logn "### add aolcommands..."
 chmod a+x $COMP/usr/local/bin/*
@@ -123,7 +123,7 @@ echo -e "if [ -f ~/first_run ]; then\n\tbash first_run\nfi" >> $ROOTFS/root/.bas
 ######### after fixes #########
 
 logn "### fix apt error..."
-chrun "/usr/sbin/usermod -g 3003 _apt"
+chrun "usermod -g 3003 _apt"
 
 logn "### fix permissions for /tmp ..."
 chmod a+rwx $ROOTFS/tmp
@@ -152,12 +152,12 @@ logn "### write version information..."
 echo "ro.build.version.linux=$(date "+%Y%m%d").120000" > $ROOTFS/linux.txt
 
 ######### buildroot independent parts #########
-logn "#### run buildroot independent parts..."
+logn "### run buildroot independent parts..."
 source $SERVICE_DIR/buildroot-install.sh
 
 logn "### clean apt cache..."
-chrun "/bin/apt-get clean"
-chrun "/bin/apt-get autoclean"
+chrun "apt-get clean"
+chrun "apt-get autoclean"
 
 logn "### prepare to make images..."
 umount $ROOTFS/{sys,proc,dev/pts,dev}
