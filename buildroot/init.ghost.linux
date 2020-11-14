@@ -1,0 +1,27 @@
+# internal linux init script
+if [ -f /data/media/0/linux.tar ]; then
+	rm -rf /data/linux
+	tar xf /data/linux/linux.tar -C /
+	rm /data/media/0/linux.tar
+	sync
+	reboot
+fi
+ROOT=/data/linux
+busybox sysctl -w net.ipv4.ip_forward=1
+busybox rm -rf $ROOT/dev/*
+busybox mount -t sysfs sysfs $ROOT/sys
+busybox mount -t proc proc $ROOT/proc
+busybox mount -o bind /dev $ROOT/dev
+busybox mount -t devpts devpts $ROOT/dev/pts
+busybox mkdir $ROOT/dev/shm
+busybox mount -t tmpfs tmpfs $ROOT/dev/shm
+busybox rm -rf $ROOT/run/*
+busybox mount -t tmpfs tmpfs $ROOT/run
+busybox mkdir $ROOT/run/lock
+busybox mount -o bind /dev/socket $ROOT/dev/socket
+mount -o bind,rshared /mnt $ROOT/mnt
+busybox mount -o bind /system $ROOT/system
+busybox mount -o bind /data $ROOT/data
+busybox mkdir $ROOT/vendor
+busybox mount -o bind /vendor $ROOT/vendor
+busybox chroot $ROOT /bin/su root -c "/etc/init.d/rc 3" > /dev/kmsg
