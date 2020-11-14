@@ -42,7 +42,7 @@ d_stop() {
     umount -l $CHDIR/proc
     umount -l $CHDIR/run
     umount -l $CHDIR/sys
-    umount -l $CHDIR/app/data
+    umount -l $CHCONFIGDIR
 }
 
 case $1 in

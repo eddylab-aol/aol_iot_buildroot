@@ -36,6 +36,8 @@ logn "### You should run this script debian/ubuntu based OS"
 
 logn "### cleanup buildroot..."
 rm -rf $ROOTFS > /dev/null 2>&1
+rm -rf linux.tar-*
+rm -rf rootfs.tar.gz
 
 logn "### install dependent packages..."
 apt update && apt install -y debootstrap binfmt-support qemu-user-static
@@ -82,7 +84,7 @@ sed -i -e 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' $ROOTFS/e
 sed -i -e 's/#PasswordAuthentication yes/PasswordAuthentication yes/g' $ROOTFS/etc/ssh/sshd_config
 
 logn "### install some packages..."
-chrun "/bin/apt install dialog locales tzdata wget curl unzip -y"
+chrun "/bin/apt install dialog locales tzdata wget curl unzip sysvinit-core sysvinit-utils -y"
 
 logn "### add android groups ..."
 cp $COMP/etc/passwd $ROOTFS/etc/passwd
@@ -97,15 +99,6 @@ cp $ROOTFS/usr/share/zoneinfo/Asia/Seoul $ROOTFS/etc/localtime
 
 logn "### set google dns..."
 echo "nameserver 8.8.8.8" > $ROOTFS/etc/resolv.conf
-
-logn "### add rc init script..."
-chmod a+x $COMP/etc/init.d/rc
-cp $COMP/etc/init.d/rc $ROOTFS/etc/init.d/rc
-
-logn "### add rc.local..."
-chmod a+x $COMP/etc/init.d/rc.local
-cp $COMP/etc/init.d/rc.local $ROOTFS/etc/init.d/rc.local
-chrun "/usr/sbin/update-rc.d rc.local defaults"
 
 logn "### add aolinit script..."
 chmod a+x $COMP/etc/init.d/aolinit

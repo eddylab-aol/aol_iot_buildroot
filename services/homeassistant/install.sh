@@ -13,6 +13,6 @@ tar xf hass.tar.gz
 mv hass/ $TARGET_DIR/hass
 cp hass.sh /etc/init.d/hass
 chmod a+x /etc/init.d/hass
-update-rc.d hass defaults
 
-
+cd /etc/rc3.d
+ln -s ../init.d/hass S02hass

@@ -21,13 +21,13 @@ output "configure root password..."
 passwd root
 
 output "fix some errors..."
+# fix fome error
+chmod a+rwx /tmp
 # fix ca-certificates error
 apt update
 apt autoremove ca-certificates -y
 apt install ca-certificates -y
 
-# fix tmp rights error
-chmod a+rwx /tmp
 
 output "configuration finished..."
 
