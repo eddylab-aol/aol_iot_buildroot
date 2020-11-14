@@ -11,6 +11,9 @@
 ### END INIT INFO
 
 do_start() {
+	# dev/pts
+	mount -t devpts devpts /dev/pts
+	
 	# hostname 
 	/usr/bin/hostname $(cat /etc/hostname)
 	
