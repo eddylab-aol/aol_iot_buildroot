@@ -15,6 +15,4 @@ tar xf $ROOTFS_FILE
 mv $INIT_FILE/ $TARGET_DIR/$INIT_FILE
 cp $INIT_FILE.sh /etc/init.d/$INIT_FILE
 chmod a+x /etc/init.d/$INIT_FILE
-
-cd /etc/rc3.d
-ln -s ../z2m S02z2m
+update-rc.d z2m defaults

@@ -20,7 +20,7 @@ function loge {
 }
 
 function chrun {
-	chroot $ROOTFS/ $1
+	chroot $ROOTFS/ /usr/bin/qemu-arm-static "$1"
 }
 
 function check {
@@ -76,6 +76,9 @@ echo "AOL-Debian" > $ROOTFS/etc/hostname
 logn "### set root passwd..."
 echo -e "androidoverlinux\nandroidoverlinux\n" | chrun "/bin/passwd root"
 
+logn "### install some packages..."
+chrun "/bin/apt install dialog locales tzdata wget curl unzip sysvinit-core sysvinit-utils -y"
+
 logn "### install openssh server..."
 chrun "/bin/apt update"
 chrun "/usr/bin/hostname $(cat /etc/hostname)"
@@ -83,8 +86,6 @@ chrun "/bin/apt install openssh-server -y"
 sed -i -e 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' $ROOTFS/etc/ssh/sshd_config
 sed -i -e 's/#PasswordAuthentication yes/PasswordAuthentication yes/g' $ROOTFS/etc/ssh/sshd_config
 
-logn "### install some packages..."
-chrun "/bin/apt install dialog locales tzdata wget curl unzip sysvinit-core sysvinit-utils -y"
 
 logn "### add android groups ..."
 cp $COMP/etc/passwd $ROOTFS/etc/passwd
