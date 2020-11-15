@@ -30,7 +30,6 @@ function check {
     fi
 }
 
-
 logn "### Android Over Linux buildroot script"
 logn "### You should run this script debian/ubuntu based OS"
 
@@ -46,7 +45,8 @@ update-binfmts --enable qemu-arm
 logn "### make debian10 buster $ROOTFS..."
 mkdir $ROOTFS
 logn "### rootfs directory `readlink -e "$ROOTFS"`..."
-debootstrap --no-check-gpg --extractor=ar --exclude=init,systemd-sysv,dbus --include=locales,sudo --arch armhf --foreign buster $ROOTFS/ http://ftp.kr.debian.org/debian
+debootstrap --no-check-gpg --extractor=ar  --include=sysvinit-core --arch armhf --foreign buster $ROOTFS/ http://deb.debian.org/debian
+sed -i -e 's/systemd systemd-sysv //g' $ROOTFS/debootstrap/required
 
 logn "### run debian10 buster $ROOTFS second stage..."
 cp /usr/bin/qemu-arm-static $ROOTFS/usr/bin
@@ -64,16 +64,16 @@ chrun "mkdir /data /vendor /system"
 logn "### add buster repository urls..."
 cat <<'EOF' > $ROOTFS/etc/apt/sources.list
 # debian buster repo
-deb http://ftp.kr.debian.org/debian/ buster main contrib non-free
-deb-src http://ftp.kr.debian.org/debian/ buster main contrib non-free
+deb http://deb.debian.org/debian/ buster main contrib non-free
+deb-src http://deb.debian.org/debian/ buster main contrib non-free
 
 # debian stretch-backports repo
-deb http://ftp.kr.debian.org/debian buster-backports main contrib non-free
-deb-src http://ftp.kr.debian.org/debian buster-backports main contrib non-free
+deb http://deb.debian.org/debian buster-backports main contrib non-free
+deb-src http://deb.debian.org/debian buster-backports main contrib non-free
 
 # debian stretch-updates repo
-deb http://ftp.kr.debian.org/debian buster-updates main contrib non-free
-deb-src http://ftp.kr.debian.org/debian buster-updates main contrib non-free
+deb http://deb.debian.org/debian buster-updates main contrib non-free
+deb-src http://deb.debian.org/debian buster-updates main contrib non-free
 EOF
 
 logn "### set hostname..."
@@ -85,12 +85,12 @@ echo -e "androidoverlinux\nandroidoverlinux\n" | chrun "passwd root"
 logn "### install some packages..."
 echo 'apt::sandbox::seccomp "false";' > $ROOTFS/etc/apt/apt.conf.d/999seccomp-off
 echo 'Debug::NoDropPrivs "true";' > $ROOTFS/etc/apt/apt.conf.d/00no-drop-privs
-chrun "apt install dialog locales tzdata wget curl unzip sysvinit-core sysvinit-utils -y"
+chrun "apt install --no-install-recommends dialog locales tzdata wget curl unzip sysvinit-core sysvinit-utils -y"
 
 logn "### install openssh server..."
 chrun "apt update"
 chrun "hostname $(cat /etc/hostname)"
-chrun "apt install openssh-server -y"
+chrun "apt install --no-install-recommends openssh-server -y"
 sed -i -e 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' $ROOTFS/etc/ssh/sshd_config
 sed -i -e 's/#PasswordAuthentication yes/PasswordAuthentication yes/g' $ROOTFS/etc/ssh/sshd_config
 

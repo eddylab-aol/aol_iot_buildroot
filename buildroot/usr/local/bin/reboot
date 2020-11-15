@@ -1,3 +1,0 @@
-#!/bin/bash
-/etc/init.d/rc 0 > /dev/null 2>&1
-/system/bin/reboot

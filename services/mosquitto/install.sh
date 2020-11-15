@@ -2,5 +2,5 @@
 
 echo "### install mosquitto..."
 
-apt install mosquitto -y
+apt install --no-install-recommends mosquitto -y
 
