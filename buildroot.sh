@@ -150,7 +150,7 @@ rm $ROOTFS/etc/rc6.d/K07umountroot
 rm $ROOTFS/etc/rc6.d/K08reboot
 
 logn "### fix rc PATH..."
-sed -i -e 's,PATH=^,PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin,g' $ROOTFS/etc/init.d/rc
+sed -i -e 's,PATH=^,PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin,g' $ROOTFS/lib/init/rc
 
 
 ######### after fixes end #########
