@@ -20,7 +20,7 @@ function loge {
 }
 
 function chrun {
-	chroot $ROOTFS/ /usr/bin/qemu-arm-static /bin/bash -c "$1"
+	chroot $ROOTFS/ /usr/bin/qemu-arm-static /usr/bin/su root -c "$1"
 }
 
 function check {
