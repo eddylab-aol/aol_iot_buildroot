@@ -1,27 +1,42 @@
+#!/system/bin/sh
+
 # internal linux init script
+
+# for linux image update
 if [ -f /data/media/0/linux.tar ]; then
 	rm -rf /data/linux
-	tar xf /data/linux/linux.tar -C /
+	tar xf /data/media/0/linux.tar -C /
 	rm /data/media/0/linux.tar
 	sync
 	reboot
 fi
+
 ROOT=/data/linux
 busybox sysctl -w net.ipv4.ip_forward=1
 busybox rm -rf $ROOT/dev/*
-busybox mount -t sysfs sysfs $ROOT/sys
-busybox mount -t proc proc $ROOT/proc
+
+# mount system dir
+busybox mount -o bind /sys $ROOT/sys
+busybox mount -t proc /proc $ROOT/proc
 busybox mount -o bind /dev $ROOT/dev
-busybox mount -t devpts devpts $ROOT/dev/pts
+busybox mount -o bind $ROOT/dev/pts
 busybox mkdir $ROOT/dev/shm
 busybox mount -t tmpfs tmpfs $ROOT/dev/shm
 busybox rm -rf $ROOT/run/*
 busybox mount -t tmpfs tmpfs $ROOT/run
+busybox rm -rf $ROOT/tmp/*
+busybox mount -t tmpfs tmpfs $ROOT/tmp
 busybox mkdir $ROOT/run/lock
-busybox mount -o bind /dev/socket $ROOT/dev/socket
+busybox mount -t tmpfs tmpfs $ROOT/lock
+busybox rm $ROOT/etc/mtab
+#busybox mount -o bind /dev/socket $ROOT/dev/socket
+
+# mount android resources
 mount -o bind,rshared /mnt $ROOT/mnt
 busybox mount -o bind /system $ROOT/system
 busybox mount -o bind /data $ROOT/data
 busybox mkdir $ROOT/vendor
 busybox mount -o bind /vendor $ROOT/vendor
-busybox chroot $ROOT /bin/su root -c "/etc/init.d/rc 3" > /dev/kmsg
+
+# run init start
+busybox chroot $ROOT /etc/init.d/rc 3 &

@@ -130,6 +130,24 @@ chrun "usermod -g 3003 _apt"
 logn "### fix permissions for /tmp ..."
 chmod a+rwx $ROOTFS/tmp
 
+logn "### fix dbus..."
+sed -i -e "s/passwd:         files systemd/passwd:         files/g" $ROOTFS/etc/nsswitch.conf
+sed -i -e "s/group:          files systemd/group:          files/g" $ROOTFS/etc/nsswitch.conf
+
+logn "### fix rc3.d / rc6.d..."
+rm $ROOTFS/etc/rc3.d/S01bootlogs
+rm $ROOTFS/etc/rc3.d/S01rmnologin
+
+rm $ROOTFS/etc/rc6.d/K01brightness
+rm $ROOTFS/etc/rc6.d/K01udev
+rm $ROOTFS/etc/rc6.d/K01urandom
+rm $ROOTFS/etc/rc6.d/K02sendsigs
+rm $ROOTFS/etc/rc6.d/K04hwclock.sh
+rm $ROOTFS/etc/rc6.d/K04umountnfs.sh
+rm $ROOTFS/etc/rc6.d/K05networking
+rm $ROOTFS/etc/rc6.d/K06umountfs
+rm $ROOTFS/etc/rc6.d/K07umountroot
+rm $ROOTFS/etc/rc6.d/K08reboot
 ######### after fixes end #########
 
 logn "### patch /etc/motd..."
