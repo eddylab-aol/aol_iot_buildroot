@@ -24,6 +24,8 @@ RUN_AS=root
 
 d_start() {
     mkdir -p $CONFIGDIR > /dev/null 2>&1
+    cp /etc/localtime $CHDIR/etc/localtime
+    cp /etc/resolv.conf $CHDIR/etc/resolv.conf
     mount --bind /dev $CHDIR/dev
     mount --bind /proc $CHDIR/proc
     mount --bind /run $CHDIR/run
