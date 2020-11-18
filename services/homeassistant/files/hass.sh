@@ -23,7 +23,7 @@ DAEMON_ARGS="$CHDIR $CHCOMMAND"
 RUN_AS=root
 
 d_start() {
-    mkdir -p $CONFIGIDR > /dev/null 2>&1
+    mkdir -p $CONFIGDIR > /dev/null 2>&1
     mount --bind /dev $CHDIR/dev
     mount --bind /proc $CHDIR/proc
     mount --bind /run $CHDIR/run

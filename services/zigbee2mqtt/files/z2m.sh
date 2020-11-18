@@ -15,13 +15,32 @@ DESC="z2m"
 NAME=z2m
 PIDFILE=/var/run/$NAME.pid
 COMMAND="/usr/sbin/chroot"
-DAEMON_ARGS="/opt/z2m /bin/sh /usr/local/bin/docker-entrypoint.sh node /app/index.js"
-RUN_AS=root
 CHDIR=/opt/z2m
+DAEMON_ARGS="$CHDIR /bin/sh /usr/local/bin/docker-entrypoint.sh node /app/index.js"
+RUN_AS=root
 CONFIGDIR=/data/media/0/z2m
 
 d_start() {
-    mkdir -p $CONFIGIDR > /dev/null 2>&1
+	if [ ! -d "$CONFIGDIR" ]; then    
+	    mkdir -p $CONFIGDIR > /dev/null 2>&1
+	    cat << 'EOF' > $CONFIGDIR/configuration.yaml
+homeassistant: true
+permit_join: false
+mqtt:
+  base_topic: zigbee2mqtt
+  server: 'mqtt://localhost'
+serial:
+  port: /dev/ttyACM0
+advanced:
+  availability_blocklist: []
+  availability_passlist: []
+frontend:
+  port: 8124
+experimental:
+  new_api: true
+devices: {}
+EOF
+	fi
     mount --bind /dev $CHDIR/dev
     mount --bind /proc $CHDIR/proc
     mount --bind /run $CHDIR/run

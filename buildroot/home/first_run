@@ -18,7 +18,12 @@ sleep 3
 dpkg-reconfigure locales
 
 output "configure root password..."
-passwd root
+CHECK=2
+while [ $CHECK -gt 1 ];
+do
+	passwd root
+	CHECK="$?"
+done
 
 output "fix some errors..."
 # fix fome error

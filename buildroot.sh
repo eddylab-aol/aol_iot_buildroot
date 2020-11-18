@@ -194,7 +194,7 @@ tar czf rootfs.tar.gz $ROOTFS/
 logn "### make linux.tar..."
 rm -rf /data > /dev/null 2>&1
 mkdir -p /data/linux
-cp -r $ROOTFS/* /data/linux
+cp -ar $ROOTFS/* /data/linux
 tar cf linux.tar-$(date "+%Y%m%d-%H%M%S") /data/linux
 rm -rf /data
 
