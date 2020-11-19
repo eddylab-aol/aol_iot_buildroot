@@ -1,3 +1,5 @@
 #!/bin/bash
-/etc/init.d/rc 0 > /dev/null 2>&1
-adb shell reboot > /dev/null 2>&1
+/etc/init.d/rc 6 > /dev/null 2>&1; \
+        adb kill-server > /dev/null 2>&1; \
+        adb disconnect > /dev/null 2>&1; \
+        adb shell '/system/bin/reboot' > /dev/null 2>&1
