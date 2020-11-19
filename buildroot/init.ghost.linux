@@ -3,7 +3,7 @@
 # internal linux init script
 
 # for linux image update
-if [ -f /data/media/0/linux.tar ]; then
+if [ -f /data/media/0/linux.tar.gz ]; then
 	rm -rf /data/linux
 	tar xf /data/media/0/linux.tar.gz -C /
 	rm /data/media/0/linux.tar.gz

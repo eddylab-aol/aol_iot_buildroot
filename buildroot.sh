@@ -35,7 +35,7 @@ logn "### You should run this script debian/ubuntu based OS"
 
 logn "### cleanup buildroot..."
 rm -rf $ROOTFS > /dev/null 2>&1
-rm -rf linux.tar-*
+rm -rf linux.tar*
 rm -rf rootfs.tar.gz
 
 logn "### install dependent packages..."
