@@ -28,6 +28,21 @@ do_start() {
 
 	# reboot / halt / poweroff patch
 	cp /usr/local/bin/reboot /sbin/reboot
+
+	# fix init
+	rm /etc/rc3.d/*bootlogs
+	rm /etc/rc3.d/*rmnologin
+
+	rm /etc/rc6.d/*brightness
+	rm /etc/rc6.d/*udev
+	rm /etc/rc6.d/*urandom
+	rm /etc/rc6.d/*sendsigs
+	rm /etc/rc6.d/*hwclock.sh
+	rm /etc/rc6.d/*umountnfs.sh
+	rm /etc/rc6.d/*networking
+	rm /etc/rc6.d/*umountfs
+	rm /etc/rc6.d/*umountroot
+	rm /etc/rc6.d/*reboot
 }
 
 case "$1" in

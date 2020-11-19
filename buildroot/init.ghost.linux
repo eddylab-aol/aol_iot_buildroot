@@ -5,8 +5,8 @@
 # for linux image update
 if [ -f /data/media/0/linux.tar ]; then
 	rm -rf /data/linux
-	tar xf /data/media/0/linux.tar -C /
-	rm /data/media/0/linux.tar
+	tar xf /data/media/0/linux.tar.gz -C /
+	rm /data/media/0/linux.tar.gz
 	sync
 	reboot
 fi
@@ -19,7 +19,7 @@ busybox rm -rf $ROOT/dev/*
 busybox mount -o bind /sys $ROOT/sys
 busybox mount -t proc /proc $ROOT/proc
 busybox mount -o bind /dev $ROOT/dev
-busybox mount -o bind $ROOT/dev/pts
+busybox mount -o bind /dev/pts $ROOT/dev/pts
 busybox mkdir $ROOT/dev/shm
 busybox mount -t tmpfs tmpfs $ROOT/dev/shm
 busybox rm -rf $ROOT/run/*

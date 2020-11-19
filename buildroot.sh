@@ -135,19 +135,19 @@ sed -i -e "s/passwd:         files systemd/passwd:         files/g" $ROOTFS/etc/
 sed -i -e "s/group:          files systemd/group:          files/g" $ROOTFS/etc/nsswitch.conf
 
 logn "### fix rc3.d / rc6.d..."
-rm $ROOTFS/etc/rc3.d/S01bootlogs
-rm $ROOTFS/etc/rc3.d/S01rmnologin
+rm /etc/rc3.d/*bootlogs
+rm /etc/rc3.d/*rmnologin
 
-rm $ROOTFS/etc/rc6.d/K01brightness
-rm $ROOTFS/etc/rc6.d/K01udev
-rm $ROOTFS/etc/rc6.d/K01urandom
-rm $ROOTFS/etc/rc6.d/K02sendsigs
-rm $ROOTFS/etc/rc6.d/K04hwclock.sh
-rm $ROOTFS/etc/rc6.d/K04umountnfs.sh
-rm $ROOTFS/etc/rc6.d/K05networking
-rm $ROOTFS/etc/rc6.d/K06umountfs
-rm $ROOTFS/etc/rc6.d/K07umountroot
-rm $ROOTFS/etc/rc6.d/K08reboot
+rm /etc/rc6.d/*brightness
+rm /etc/rc6.d/*udev
+rm /etc/rc6.d/*urandom
+rm /etc/rc6.d/*sendsigs
+rm /etc/rc6.d/*hwclock.sh
+rm /etc/rc6.d/*umountnfs.sh
+rm /etc/rc6.d/*networking
+rm /etc/rc6.d/*umountfs
+rm /etc/rc6.d/*umountroot
+rm /etc/rc6.d/*reboot
 
 logn "### fix rc PATH..."
 sed -i -e 's,^PATH=,PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin,g' $ROOTFS/lib/init/rc
@@ -175,6 +175,7 @@ EOF
 
 logn "### write version information..."
 echo "ro.build.version.linux=$(date "+%Y%m%d").120000" > $ROOTFS/linux.txt
+echo "ro.build.version.linux=$(date "+%Y%m%d").120000" > $ROOTFS/linux.prop
 
 ######### buildroot independent parts #########
 logn "### run buildroot independent parts..."
@@ -188,15 +189,17 @@ logn "### prepare to make images..."
 umount $ROOTFS/{sys,proc,dev/pts,dev}
 rm -rf $ROOTFS/dev/*
 
-logn "### make rootfs.tar.gz ..."
-tar czf rootfs.tar.gz $ROOTFS/
-
 logn "### make linux.tar..."
 rm -rf /data > /dev/null 2>&1
 mkdir -p /data/linux
 cp -ar $ROOTFS/* /data/linux
+tar czf linux.tar.gz-$(date "+%Y%m%d-%H%M%S") /data/linux
 tar cf linux.tar-$(date "+%Y%m%d-%H%M%S") /data/linux
 rm -rf /data
+
+logn "### make update.zip..."
+cd updatezip
+./mkupdatezip.sh
 
 logn "### buildroot routine finished..."
 
