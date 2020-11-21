@@ -13,7 +13,7 @@
 # How to clone source & build
 
 ```
-repo init -u repo init -u https://github.com/eddylab-aol/aol_manifast -b u5
+repo init -u https://github.com/eddylab-aol/aol_manifast -b u5
 repo sync
 bash buildroot.sh
 ```
