@@ -1,10 +1,10 @@
-# AoL IOT buildroot
+# AoL IOT buildroot (not updated after 201121 ~)
 
 - HomeAssistant Core
 - Zigbee2Mqtt
 - mosquitto
 
-# distributed blow repository (201121 ~)
+# distributed below repository (201121 ~)
 
 - aol_buildroot.git
 - aol_services.git
