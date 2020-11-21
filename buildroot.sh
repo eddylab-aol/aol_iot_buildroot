@@ -179,7 +179,7 @@ echo "ro.build.version.linux=$(date "+%Y%m%d").120000" > $ROOTFS/linux.prop
 
 ######### buildroot independent parts #########
 logn "### run buildroot independent parts..."
-#source $SERVICE_DIR/buildroot-install.sh
+source $SERVICE_DIR/buildroot-install.sh
 
 logn "### clean apt cache..."
 chrun "apt-get clean"
