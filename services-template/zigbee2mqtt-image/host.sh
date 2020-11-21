@@ -12,7 +12,7 @@ function output {
 	echo -e "${RED}[BUILDROOT-SERVICE]${GREEN} $1 ${NC}"
 }
 
-output "download z2m.tar.gz"
+output "### download z2m.tar.gz"
 
 bash docker_rootfs_arm.sh z2m koenkk/zigbee2mqtt:latest
 mv z2m.tar.gz files/

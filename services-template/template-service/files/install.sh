@@ -10,6 +10,6 @@ function output {
 
 SERVICE_NAME=""
 
-output "install $SERVICE_NAME..."
+output "### install $SERVICE_NAME..."
 
 # installation commands

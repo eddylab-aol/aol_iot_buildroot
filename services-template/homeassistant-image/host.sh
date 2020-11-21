@@ -12,7 +12,7 @@ function output {
 	echo -e "${RED}[BUILDROOT-SERVICE]${GREEN} $1 ${NC}"
 }
 
-output "download hass.tar.gz..."
+output "### download hass.tar.gz..."
 
 bash docker_rootfs_arm.sh hass homeassistant/home-assistant:latest
 mv hass.tar.gz files/

@@ -9,7 +9,7 @@ function output {
 	echo -e "${RED}[BUILDROOT-SERVICE]${GREEN} $1 ${NC}"
 }
 
-output "install zigee2mqtt..."
+output "### install zigee2mqtt..."
 
 WORK_DIR=/tmp/installer
 TARGET_DIR=/opt

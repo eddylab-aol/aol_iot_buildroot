@@ -12,3 +12,6 @@ function output {
 	echo -e "${RED}[BUILDROOT-SERVICE]${GREEN} $1 ${NC}"
 }
 
+SERVICE_NAME=""
+
+output "### $SERVICE_NAME host run..."
